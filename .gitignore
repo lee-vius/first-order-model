@@ -4,3 +4,4 @@ __pycache__
 *DS_Store
 pre_trains
 raw_data
+*.ipynb_checkpoints/
