@@ -5,3 +5,5 @@ __pycache__
 pre_trains
 raw_data
 *.ipynb_checkpoints/
+data/anim-256
+log
