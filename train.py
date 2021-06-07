@@ -48,7 +48,7 @@ def train(config, generator, discriminator, kp_detector, checkpoint, log_dir, da
     # Load in data with form that network can determine
     # Refer to pytorch DataLoader for details
     # 这里dataloader是一个FramesDataset类，它是 Dataset 的一个子类，所以可以有如下操作
-    dataloader = DataLoader(dataset, batch_size=train_params['batch_size'], shuffle=True, num_workers=6, drop_last=True)
+    dataloader = DataLoader(dataset, batch_size=train_params['batch_size'], shuffle=True, num_workers=2, drop_last=True)
 
     # Initialize two models for training
     # TODO: 阅读 generator 和 discrimator 的构造，key point detector 的部分应包含在 generator 当中

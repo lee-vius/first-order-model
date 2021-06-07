@@ -83,6 +83,7 @@ if __name__ == "__main__":
     # Refer to ./config/vox-256.yaml for details
     # 数据预处理在此步骤完成，并读取进 dataset 变量中
     dataset = FramesDataset(is_train=(opt.mode == 'train'), **config['dataset_params'])
+    print("Dataset size: {}, repeat number: {}".format(len(dataset), config['train_params']['num_repeats']))
 
     # Create the logging direction
     if not os.path.exists(log_dir):
