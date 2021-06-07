@@ -81,6 +81,7 @@ if __name__ == "__main__":
 
     # Read in dataset details, defined in *.yaml config file, "dataset_params" section
     # Refer to ./config/vox-256.yaml for details
+    # 数据预处理在此步骤完成，并读取进 dataset 变量中
     dataset = FramesDataset(is_train=(opt.mode == 'train'), **config['dataset_params'])
 
     # Create the logging direction
