@@ -67,7 +67,7 @@ def train(config, generator, discriminator, kp_detector, checkpoint, log_dir, da
                 # 此处为前向传播，第一个返回值为loss，第二个为生成器的输出图片
                 losses_generator, generated = generator_full(x)
 
-                # TODO: 猜测此处计算的loss是针对一个视频的重建结果，这里取了平均值进行计算
+                # 此处计算的loss有很多种类，此处取了每一种的平均并求和
                 loss_values = [val.mean() for val in losses_generator.values()]
                 loss = sum(loss_values)
 

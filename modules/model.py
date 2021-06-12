@@ -7,34 +7,46 @@ import numpy as np
 from torch.autograd import grad
 
 
+# 申明本模型使用的 Vgg 模型
 class Vgg19(torch.nn.Module):
     """
     Vgg19 network for perceptual loss. See Sec 3.3.
     """
     def __init__(self, requires_grad=False):
         super(Vgg19, self).__init__()
+        # 加载预训练好的 Vgg19 模型（针对 ImageNet 预训练好的模型）
         vgg_pretrained_features = models.vgg19(pretrained=True).features
         self.slice1 = torch.nn.Sequential()
         self.slice2 = torch.nn.Sequential()
         self.slice3 = torch.nn.Sequential()
         self.slice4 = torch.nn.Sequential()
         self.slice5 = torch.nn.Sequential()
+        # 注：add_module 可以用于声明特定名字的模块，也可以用于替换该命名的模块
         for x in range(2):
+            # 对于 Slice1 声明两个子模型模块
             self.slice1.add_module(str(x), vgg_pretrained_features[x])
         for x in range(2, 7):
+            # 对于 Slice2 声明5个子模型模块
             self.slice2.add_module(str(x), vgg_pretrained_features[x])
         for x in range(7, 12):
+            # 同上
             self.slice3.add_module(str(x), vgg_pretrained_features[x])
         for x in range(12, 21):
+            # 同上
             self.slice4.add_module(str(x), vgg_pretrained_features[x])
         for x in range(21, 30):
+            # 同上
             self.slice5.add_module(str(x), vgg_pretrained_features[x])
 
+        # 声明一组可以训练的参数 mean 和 std
+        # 此处使用定义好的参数用于正则化，是使用了 ImageNet 的均值和标准差
+        # 由于不要求更新此处参数，因此将梯度求导关闭
         self.mean = torch.nn.Parameter(data=torch.Tensor(np.array([0.485, 0.456, 0.406]).reshape((1, 3, 1, 1))),
                                        requires_grad=False)
         self.std = torch.nn.Parameter(data=torch.Tensor(np.array([0.229, 0.224, 0.225]).reshape((1, 3, 1, 1))),
                                       requires_grad=False)
 
+        # 若不要求训练，则将梯度推导关闭
         if not requires_grad:
             for param in self.parameters():
                 param.requires_grad = False
@@ -46,6 +58,7 @@ class Vgg19(torch.nn.Module):
         h_relu3 = self.slice3(h_relu2)
         h_relu4 = self.slice4(h_relu3)
         h_relu5 = self.slice5(h_relu4)
+        # 注：此处之所以多此一举把 Vgg 拆开是要将其中间结果都作为输出
         out = [h_relu1, h_relu2, h_relu3, h_relu4, h_relu5]
         return out
 
@@ -54,10 +67,12 @@ class ImagePyramide(torch.nn.Module):
     """
     Create image pyramide for computing pyramide perceptual loss. See Sec 3.3
     """
+    # 该模块作用是计算不同尺度的 感知损失
     def __init__(self, scales, num_channels):
         super(ImagePyramide, self).__init__()
         downs = {}
         for scale in scales:
+            # TODO：阅读它的抗锯齿2维插值
             downs[str(scale).replace('.', '-')] = AntiAliasInterpolation2d(num_channels, scale)
         self.downs = nn.ModuleDict(downs)
 
@@ -128,8 +143,10 @@ class GeneratorFullModel(torch.nn.Module):
     """
     Merge all generator related updates into single model for better multi-gpu usage
     """
-
+    # 此模型仅是将所有用到的模块放在了一起
+    # 方便GPU调度等等操作
     def __init__(self, kp_extractor, generator, discriminator, train_params):
+        # TODO：阅读 kp detector 模块，generator 模块 和 discriminator 模块
         super(GeneratorFullModel, self).__init__()
         self.kp_extractor = kp_extractor
         self.generator = generator
@@ -149,14 +166,17 @@ class GeneratorFullModel(torch.nn.Module):
                 self.vgg = self.vgg.cuda()
 
     def forward(self, x):
+        # 通过 kp detector 获得两张图像的 key points
         kp_source = self.kp_extractor(x['source'])
         kp_driving = self.kp_extractor(x['driving'])
 
+        # generated 储存经由 generator 生成出来的结果
+        # 该变量是个字典类型
         generated = self.generator(x['source'], kp_source=kp_source, kp_driving=kp_driving)
         generated.update({'kp_source': kp_source, 'kp_driving': kp_driving})
 
         loss_values = {}
-
+        # 下面主要在计算 loss
         pyramide_real = self.pyramid(x['driving'])
         pyramide_generated = self.pyramid(generated['prediction'])
 
