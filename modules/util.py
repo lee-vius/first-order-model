@@ -34,6 +34,8 @@ def make_coordinate_grid(spatial_size, type):
     """
     Create a meshgrid [-1,1] x [-1,1] of given spatial_size.
     """
+    # 本函数就是构造了一个坐标矩阵
+    # 每个点有两维，分别代表 x y，范围在 -1 到 1 之间
     h, w = spatial_size
     x = torch.arange(w).type(type)
     y = torch.arange(h).type(type)

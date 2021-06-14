@@ -8,6 +8,8 @@ class DenseMotionNetwork(nn.Module):
     """
     Module that predicting a dense motion from sparse motion representation given by kp_source and kp_driving
     """
+    # 本模块对给定的源和驱动图像进行稠密运动场预测
+    # TODO：在此模块中添加运动风格化修正模块
 
     def __init__(self, block_expansion, num_blocks, max_features, num_kp, num_channels, estimate_occlusion_map=False,
                  scale_factor=1, kp_variance=0.01):
@@ -34,6 +36,7 @@ class DenseMotionNetwork(nn.Module):
         Eq 6. in the paper H_k(z)
         """
         spatial_size = source_image.shape[2:]
+        # TODO：空余时间理解下这部分的 kp 的高斯变换（猜测是把 key point 的权重用一个高斯分布表示）
         gaussian_driving = kp2gaussian(kp_driving, spatial_size=spatial_size, kp_variance=self.kp_variance)
         gaussian_source = kp2gaussian(kp_source, spatial_size=spatial_size, kp_variance=self.kp_variance)
         heatmap = gaussian_driving - gaussian_source
@@ -48,8 +51,10 @@ class DenseMotionNetwork(nn.Module):
         """
         Eq 4. in the paper T_{s<-d}(z)
         """
+        # 此处应是预测稀疏运动场的部分
         bs, _, h, w = source_image.shape
         identity_grid = make_coordinate_grid((h, w), type=kp_source['value'].type())
+        # 此处前两个维度分别对应 batch size，kep point 数量
         identity_grid = identity_grid.view(1, 1, h, w, 2)
         coordinate_grid = identity_grid - kp_driving['value'].view(bs, self.num_kp, 1, 1, 2)
         if 'jacobian' in kp_driving:
@@ -59,6 +64,7 @@ class DenseMotionNetwork(nn.Module):
             coordinate_grid = torch.matmul(jacobian, coordinate_grid.unsqueeze(-1))
             coordinate_grid = coordinate_grid.squeeze(-1)
 
+        # 此处得到了预测两者运动的变化
         driving_to_source = coordinate_grid + kp_source['value'].view(bs, self.num_kp, 1, 1, 2)
 
         #adding background feature
@@ -79,6 +85,7 @@ class DenseMotionNetwork(nn.Module):
         return sparse_deformed
 
     def forward(self, source_image, kp_driving, kp_source):
+        # 先对目标图片下采样
         if self.scale_factor != 1:
             source_image = self.down(source_image)
 
@@ -86,7 +93,12 @@ class DenseMotionNetwork(nn.Module):
 
         out_dict = dict()
         heatmap_representation = self.create_heatmap_representations(source_image, kp_driving, kp_source)
+        # 这一步得到了 运动变化矩阵（稀疏运动场）
         sparse_motion = self.create_sparse_motions(source_image, kp_driving, kp_source)
+        # TODO：在此处加入风格化模块
+        # 此处的 sparse_motion 的维度应该是 bs, num_kp, x坐标, y坐标, 值
+
+        # 根据运动场改变源图
         deformed_source = self.create_deformed_source_image(source_image, sparse_motion)
         out_dict['sparse_deformed'] = deformed_source
 
@@ -104,6 +116,7 @@ class DenseMotionNetwork(nn.Module):
         deformation = deformation.permute(0, 2, 3, 1)
 
         out_dict['deformation'] = deformation
+        # TODO：方案二，在此处加入风格化模块
 
         # Sec. 3.2 in the paper
         if self.occlusion:

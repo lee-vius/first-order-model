@@ -196,6 +196,7 @@ class GeneratorFullModel(torch.nn.Module):
             discriminator_maps_real = self.discriminator(pyramide_real, kp=detach_kp(kp_driving))
             value_total = 0
             for scale in self.disc_scales:
+                # 生成器更新参考此处
                 key = 'prediction_map_%s' % scale
                 value = ((1 - discriminator_maps_generated[key]) ** 2).mean()
                 value_total += self.loss_weights['generator_gan'] * value
@@ -271,6 +272,7 @@ class DiscriminatorFullModel(torch.nn.Module):
         loss_values = {}
         value_total = 0
         for scale in self.scales:
+            # 判别器更新参考此处
             key = 'prediction_map_%s' % scale
             value = (1 - discriminator_maps_real[key]) ** 2 + discriminator_maps_generated[key] ** 2
             value_total += self.loss_weights['discriminator_gan'] * value.mean()

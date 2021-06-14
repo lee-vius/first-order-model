@@ -128,6 +128,7 @@ class FramesDataset(Dataset):
         out = {}
         if self.is_train:
             # 输出的时候只选取了前两帧作为源和驱动
+            # 注：此处把 channel 作为第一个维度输出了
             source = np.array(video_array[0], dtype='float32')
             driving = np.array(video_array[1], dtype='float32')
 

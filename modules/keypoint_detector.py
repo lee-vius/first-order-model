@@ -59,6 +59,7 @@ class KPDetector(nn.Module):
         feature_map = self.predictor(x)
         
         # 使用 kp 层预测关键点
+        # 此处 prediction 的维度取决于关键点的数量
         prediction = self.kp(feature_map)
 
         final_shape = prediction.shape
