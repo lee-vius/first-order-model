@@ -53,6 +53,7 @@ class ResBlock2d(nn.Module):
     """
     Res block, preserve spatial resolution.
     """
+    # 本卷积模块会保留分辨率
 
     def __init__(self, in_features, kernel_size, padding):
         super(ResBlock2d, self).__init__()
@@ -142,6 +143,7 @@ class Encoder(nn.Module):
 
         down_blocks = []
         for i in range(num_blocks):
+            # encoder就是一堆下采样层
             down_blocks.append(DownBlock2d(in_features if i == 0 else min(max_features, block_expansion * (2 ** i)),
                                            min(max_features, block_expansion * (2 ** (i + 1))),
                                            kernel_size=3, padding=1))
@@ -200,6 +202,8 @@ class AntiAliasInterpolation2d(nn.Module):
     """
     Band-limited downsampling, for better preservation of the input signal.
     """
+    # TODO：阅读本模块，按他的说法可以更好地保留输入信号的信息
+
     def __init__(self, channels, scale):
         super(AntiAliasInterpolation2d, self).__init__()
         sigma = (1 / scale - 1) / 2

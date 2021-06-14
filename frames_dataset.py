@@ -107,14 +107,17 @@ class FramesDataset(Dataset):
 
         video_name = os.path.basename(path)
 
+        # 此情况是 path 是一个文件夹，里面装了每一帧的 png
         if self.is_train and os.path.isdir(path):
             frames = os.listdir(path)
             num_frames = len(frames)
             frame_idx = np.sort(np.random.choice(num_frames, replace=True, size=2))
             video_array = [img_as_float32(io.imread(os.path.join(path, frames[idx]))) for idx in frame_idx]
         else:
+            # 读取视频
             video_array = read_video(path, frame_shape=self.frame_shape)
             num_frames = len(video_array)
+            # 此处根据模式选项，打乱了视频顺序
             frame_idx = np.sort(np.random.choice(num_frames, replace=True, size=2)) if self.is_train else range(
                 num_frames)
             video_array = video_array[frame_idx]
@@ -124,6 +127,7 @@ class FramesDataset(Dataset):
 
         out = {}
         if self.is_train:
+            # 输出的时候只选取了前两帧作为源和驱动
             source = np.array(video_array[0], dtype='float32')
             driving = np.array(video_array[1], dtype='float32')
 

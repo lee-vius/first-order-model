@@ -22,7 +22,8 @@ if sys.version_info[0] < 3:
     raise Exception("You must use Python 3 or higher. Recommended version is Python 3.7")
 
 def load_checkpoints(config_path, checkpoint_path, cpu=False):
-
+    # 本函数主要负责读取 key point detector 和 generator
+    # 并且根据 gpu 是否可用来调整使用模式
     with open(config_path) as f:
         config = yaml.load(f)
 
@@ -48,6 +49,7 @@ def load_checkpoints(config_path, checkpoint_path, cpu=False):
         generator = DataParallelWithCallback(generator)
         kp_detector = DataParallelWithCallback(kp_detector)
 
+    # 将 generator 和 kp detector 设置成非训练模式
     generator.eval()
     kp_detector.eval()
     
@@ -57,10 +59,12 @@ def load_checkpoints(config_path, checkpoint_path, cpu=False):
 def make_animation(source_image, driving_video, generator, kp_detector, relative=True, adapt_movement_scale=True, cpu=False):
     with torch.no_grad():
         predictions = []
+        # 将 source 和 driving 转化成 tensor
         source = torch.tensor(source_image[np.newaxis].astype(np.float32)).permute(0, 3, 1, 2)
         if not cpu:
             source = source.cuda()
         driving = torch.tensor(np.array(driving_video)[np.newaxis].astype(np.float32)).permute(0, 4, 1, 2, 3)
+        # 输入 detector 获取输出
         kp_source = kp_detector(source)
         kp_driving_initial = kp_detector(driving[:, :, 0])
 

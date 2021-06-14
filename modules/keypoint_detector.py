@@ -8,15 +8,20 @@ class KPDetector(nn.Module):
     """
     Detecting a keypoints. Return keypoint position and jacobian near each keypoint.
     """
+    # 本模块负责检测图像的关键点
+    # 返回关键点位置以及 jacobian 矩阵
 
     def __init__(self, block_expansion, num_kp, num_channels, max_features,
                  num_blocks, temperature, estimate_jacobian=False, scale_factor=1,
                  single_jacobian_map=False, pad=0):
         super(KPDetector, self).__init__()
 
+        # 详情参考 Hourglass 网络结构
+        # 简单而言就是一个 encoder + 一个 decoder
         self.predictor = Hourglass(block_expansion, in_features=num_channels,
                                    max_features=max_features, num_blocks=num_blocks)
 
+        # 声明一个 key point 的卷积层
         self.kp = nn.Conv2d(in_channels=self.predictor.out_filters, out_channels=num_kp, kernel_size=(7, 7),
                             padding=pad)
 
@@ -47,10 +52,13 @@ class KPDetector(nn.Module):
         return kp
 
     def forward(self, x):
+        # 先根据 scale factor 下采样
         if self.scale_factor != 1:
             x = self.down(x)
-
+        # 使用 Hourglass 预测 feature map
         feature_map = self.predictor(x)
+        
+        # 使用 kp 层预测关键点
         prediction = self.kp(feature_map)
 
         final_shape = prediction.shape

@@ -10,7 +10,10 @@ class OcclusionAwareGenerator(nn.Module):
     Generator that given source image and and keypoints try to transform image according to movement trajectories
     induced by keypoints. Generator follows Johnson architecture.
     """
-
+    # 本模块负责生成图片
+    # 输入了源图和驱动图的关键点信息
+    # dense motion 在此模块生成
+    
     def __init__(self, num_channels, num_kp, block_expansion, max_features, num_down_blocks,
                  num_bottleneck_blocks, estimate_occlusion_map=False, dense_motion_params=None, estimate_jacobian=False):
         super(OcclusionAwareGenerator, self).__init__()
