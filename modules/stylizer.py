@@ -16,10 +16,10 @@ class StylizerGenerator(nn.Module):
     def __init__(self, num_channels, block_expansion, max_features, num_down_blocks, num_bottleneck_blocks):
         super(StylizerGenerator, self).__init__()
         
-        block_expansion = 2 * num_channels
-        max_features = 512
-        num_down_blocks = 2
-        num_bottleneck_blocks = 3
+        # block_expansion = 2 * num_channels
+        # max_features = 512
+        # num_down_blocks = 2
+        # num_bottleneck_blocks = 3
 
         # first 维持输入和输出维度相同，channel数量不同
         self.first = SameBlock2d(num_channels, block_expansion, kernel_size=(7, 7), padding=(3, 3))

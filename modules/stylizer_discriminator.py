@@ -26,13 +26,14 @@ class StylizerDiscrim(nn.Module):
         self.down_blocks = nn.ModuleList(down_blocks)
         self.conv = nn.Conv2d(min(max_features, block_expansion * (2 ** num_blocks)), out_channels=1, kernel_size=1)
 
-    def forward(self, x, kp=None):
+    def forward(self, x):
         # save the feature maps, convenient for visualization
         feature_maps = []
-        out = x
+        x = self.first(x)
         for down_block in self.down_blocks:
-            feature_maps.append(down_block(out))
-            out = feature_maps[-1]
-        prediction_map = self.conv(out)
+            x = down_block(x)
+            feature_maps.append(x)
+            x = feature_maps[-1]
+        prediction_map = self.conv(x)
 
         return feature_maps, prediction_map

@@ -41,6 +41,18 @@ model_params:
     max_features: 512
     num_blocks: 4
     sn: True
+  stylizer_params:
+    num_channels: 20
+    block_expansion: 40
+    max_features: 512
+    num_down_blocks: 2
+    num_bottleneck_blocks: 3
+  stylizerDiscrim_params:
+    num_channels: 20
+    block_expansion: 32
+    num_blocks: 3
+    max_features: 512
+    
 
 train_params:
   num_epochs: 120
@@ -63,6 +75,19 @@ train_params:
     perceptual: [10, 10, 10, 10, 10]
     equivariance_value: 10
     equivariance_jacobian: 10
+
+
+stylize_params:
+  num_epochs: 2
+  checkpoint_freq: 5
+  lr_stylizer: 2.0e-4
+  lr_styDiscrim: 2.0e-4
+  loss_weights:
+    mse: 1
+    gan: 0
+    match: 0
+    discrim: 1
+  
 
 reconstruction_params:
   num_videos: 1000
