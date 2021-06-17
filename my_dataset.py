@@ -96,7 +96,7 @@ class MyDataset(Dataset):
         else:
             name_source = self.source_videos[idx]
             path_source = os.path.join(self.source_dir, name_source)
-            name_target = self.target_videos[idx]
+            name_target = self.target_videos[idx % len(self.target_videos)]
             path_target = os.path.join(self.target_dir, name_target)
 
         video_src_name = os.path.basename(path_source)
