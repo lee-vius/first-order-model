@@ -105,7 +105,7 @@ class MyLogger:
         self.loss_list.append(list(losses.values()))
 
     # make logs for an epoch
-    def log_epoch(self, epoch, models, inp, out):
+    def log_epoch(self, epoch, models, inp=None, out=None):
         self.epoch = epoch
         self.models = models
         if (self.epoch + 1) % self.checkpoint_freq == 0:
