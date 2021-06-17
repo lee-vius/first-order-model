@@ -21,7 +21,8 @@ class MyDataset(Dataset):
       - folder with all frames
     This Dataset will include both source and target data.
     """
-
+    # 适应stylizer训练的 data 构建器
+    # 整体与 frames_dataset 类似
     def __init__(self, source_dir, target_dir, frame_shape=(256, 256, 3), id_sampling=False, is_train=True,
                  random_seed=0, pairs_list=None, augmentation_params=None):
         self.source_dir = source_dir
@@ -83,7 +84,7 @@ class MyDataset(Dataset):
             self.transform = None
 
     def __len__(self):
-        return len(self.source_videos)
+        return len(self.target_videos)
 
     def __getitem__(self, idx):
         # will return index of source videos

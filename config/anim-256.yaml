@@ -71,7 +71,7 @@ model_params:
 
 train_params:
   num_epochs: 120
-  num_repeats: 4
+  num_repeats: 3
   epoch_milestones: [82, 112]
   lr_generator: 2.0e-4
   lr_discriminator: 2.0e-4
