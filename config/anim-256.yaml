@@ -93,13 +93,13 @@ train_params:
 
 
 stylize_params:
-  num_epochs: 2
+  num_epochs: 20
   checkpoint_freq: 5
   lr_stylizer: 2.0e-4
   lr_styDiscrim: 2.0e-4
   loss_weights:
     mse: 1
-    gan: 0
+    gan: 0.2
     match: 0
     discrim: 1
   
