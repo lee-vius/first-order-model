@@ -13,6 +13,21 @@ dataset_params:
       hue: 0.1
 
 
+target_params:
+  root_dir: data/real-256
+  frame_shape: [256, 256, 3]
+  id_sampling: False
+  augmentation_params:
+    flip_param:
+      horizontal_flip: True
+      time_flip: True
+    jitter_param:
+      brightness: 0.1
+      contrast: 0.1
+      saturation: 0.1
+      hue: 0.1
+
+
 model_params:
   common_params:
     num_kp: 10

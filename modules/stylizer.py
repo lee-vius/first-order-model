@@ -56,7 +56,7 @@ class StylizerGenerator(nn.Module):
     def forward(self, dense_motion):
         output_dict = {}
         # Encoding (downsampling) part
-        # 此处是对源图片本身进行下采样
+        # 此处是对运动场进行下采样
         out = self.first(dense_motion)
         for i in range(len(self.down_blocks)):
             out = self.down_blocks[i](out)

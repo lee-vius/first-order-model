@@ -1,7 +1,6 @@
 from torch import nn
 import torch.nn.functional as F
-from modules.util import kp2gaussian, DownBlock2d, SameBlock2d
-import torch
+from modules.util import DownBlock2d, SameBlock2d
 
 
 class StylizerDiscrim(nn.Module):
@@ -9,8 +8,7 @@ class StylizerDiscrim(nn.Module):
     Discriminator serving to update dense motion generator.
     """
 
-    def __init__(self, num_channels=3, block_expansion=32, num_blocks=3, max_features=512,
-                 sn=False, use_kp=False, num_kp=10, kp_variance=0.01, **kwargs):
+    def __init__(self, num_channels=3, block_expansion=32, num_blocks=3, max_features=512):
         super(StylizerDiscrim, self).__init__()
         
         # first 维持输入和输出维度相同，channel数量不同
