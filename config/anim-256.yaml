@@ -93,7 +93,7 @@ train_params:
 
 
 stylize_params:
-  num_epochs: 20
+  num_epochs: 50
   checkpoint_freq: 5
   lr_stylizer: 2.0e-4
   lr_styDiscrim: 2.0e-4
