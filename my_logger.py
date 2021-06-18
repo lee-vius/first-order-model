@@ -48,6 +48,74 @@ class MyLogger:
         self.loss_list = []
         self.log_file.flush()
 
+    # plot the motion fields based on inputs
+    def plot_motions(self, shape, inp, out):
+        # reshape the data for plot
+        inp = inp.view(shape).detach().data.cpu().numpy()[0] # only take the first data
+        out = out.view(shape).detach().data.cpu().numpy()[0] # only take the first data
+
+        save_path = os.path.join(self.visualizations_dir, "motion_{}.png".format(self.epoch))
+        shape = inp.shape # the shape should be (num_kp, 64, 64, 2)
+        fig, axes = plt.subplots(4, shape[0], figsize=(4 * shape[0], 4 * 4))
+
+        for kp, ax in enumerate(axes[0]):
+            # plot the original motion field
+            ax.set_xlim(0, shape[1])
+            ax.set_ylim(0, shape[2])
+            ax.set_title("kp{}".format(kp))
+            for i in range(shape[1]):
+                if i % 2 == 0:
+                    continue
+                for j in range(shape[2]):
+                    if j % 2 == 0:
+                        continue
+                    ax.arrow(i, j, *inp[kp, i, j], color='b', linewidth=1.0, head_width=1.0, head_length=1.0)
+
+        for kp, ax in enumerate(axes[1]):
+            # plot the generated motion field
+            ax.set_xlim(0, shape[1])
+            ax.set_ylim(0, shape[2])
+            ax.set_title("kp{}".format(kp))
+            for i in range(shape[1]):
+                if i % 2 == 0:
+                    continue
+                for j in range(shape[2]):
+                    if j % 2 == 0:
+                        continue
+                    ax.arrow(i, j, *out[kp, i, j], color='r', linewidth=1.0, head_width=1.0, head_length=1.0)
+
+        for kp, ax in enumerate(axes[2]):
+            # plot both original and generated motion fields
+            ax.set_xlim(0, shape[1])
+            ax.set_ylim(0, shape[2])
+            ax.set_title("kp{}".format(kp))
+            for i in range(shape[1]):
+                if i % 2 == 0:
+                    continue
+                for j in range(shape[2]):
+                    if j % 2 == 0:
+                        continue
+                    ax.arrow(i, j, *inp[kp, i, j], color='b', linewidth=1.0, head_width=1.0, head_length=1.0)
+                    ax.arrow(i, j, *out[kp, i, j], color='r', linewidth=1.0, head_width=1.0, head_length=1.0)
+
+        for kp, ax in enumerate(axes[3]):
+            # plot difference motion fields
+            ax.set_xlim(0, shape[1])
+            ax.set_ylim(0, shape[2])
+            ax.set_title("kp{}".format(kp))
+            for i in range(shape[1]):
+                if i % 2 == 0:
+                    continue
+                for j in range(shape[2]):
+                    if j % 2 == 0:
+                        continue
+                    ax.arrow(i, j, *(out[kp, i, j] - inp[kp, i, j]), color='g', linewidth=1.0, head_width=1.0, head_length=1.0)
+
+        # save figs
+        plt.savefig(save_path)
+        plt.close()
+        return
+
     def plot_scores(self):
         # plot loss history
         save_path = self.visualizations_dir
@@ -105,9 +173,11 @@ class MyLogger:
         self.loss_list.append(list(losses.values()))
 
     # make logs for an epoch
-    def log_epoch(self, epoch, models, inp=None, out=None):
+    def log_epoch(self, epoch, models, shape=None, inp=None, out=None):
         self.epoch = epoch
         self.models = models
         if (self.epoch + 1) % self.checkpoint_freq == 0:
             self.save_cpk()
+            if shape != None:
+                self.plot_motions(shape, inp, out)
         self.log_scores(self.names)
