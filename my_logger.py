@@ -64,12 +64,12 @@ class MyLogger:
             ax.set_ylim(0, shape[2])
             ax.set_title("kp{}".format(kp))
             for i in range(shape[1]):
-                if i % 2 == 0:
+                if i % 4 != 0:
                     continue
                 for j in range(shape[2]):
-                    if j % 2 == 0:
+                    if j % 4 != 0:
                         continue
-                    ax.arrow(i, j, *inp[kp, i, j], color='b', linewidth=1.0, head_width=1.0, head_length=1.0)
+                    ax.arrow(i, j, *inp[kp, i, j] * 2, color='b', linewidth=0.5, head_width=0.5, head_length=0.5)
 
         for kp, ax in enumerate(axes[1]):
             # plot the generated motion field
@@ -77,12 +77,12 @@ class MyLogger:
             ax.set_ylim(0, shape[2])
             ax.set_title("kp{}".format(kp))
             for i in range(shape[1]):
-                if i % 2 == 0:
+                if i % 4 != 0:
                     continue
                 for j in range(shape[2]):
-                    if j % 2 == 0:
+                    if j % 4 != 0:
                         continue
-                    ax.arrow(i, j, *out[kp, i, j], color='r', linewidth=1.0, head_width=1.0, head_length=1.0)
+                    ax.arrow(i, j, *out[kp, i, j] * 2, color='r', linewidth=0.5, head_width=0.5, head_length=0.5)
 
         for kp, ax in enumerate(axes[2]):
             # plot both original and generated motion fields
@@ -90,13 +90,13 @@ class MyLogger:
             ax.set_ylim(0, shape[2])
             ax.set_title("kp{}".format(kp))
             for i in range(shape[1]):
-                if i % 2 == 0:
+                if i % 4 != 0:
                     continue
                 for j in range(shape[2]):
-                    if j % 2 == 0:
+                    if j % 4 != 0:
                         continue
-                    ax.arrow(i, j, *inp[kp, i, j], color='b', linewidth=1.0, head_width=1.0, head_length=1.0)
-                    ax.arrow(i, j, *out[kp, i, j], color='r', linewidth=1.0, head_width=1.0, head_length=1.0)
+                    ax.arrow(i, j, *inp[kp, i, j] * 2, color='b', linewidth=0.5, head_width=0.5, head_length=0.5)
+                    ax.arrow(i, j, *out[kp, i, j] *2 , color='r', linewidth=0.5, head_width=0.5, head_length=0.5)
 
         for kp, ax in enumerate(axes[3]):
             # plot difference motion fields
@@ -104,12 +104,12 @@ class MyLogger:
             ax.set_ylim(0, shape[2])
             ax.set_title("kp{}".format(kp))
             for i in range(shape[1]):
-                if i % 2 == 0:
+                if i % 4 != 0:
                     continue
                 for j in range(shape[2]):
-                    if j % 2 == 0:
+                    if j % 4 != 0:
                         continue
-                    ax.arrow(i, j, *(out[kp, i, j] - inp[kp, i, j]), color='g', linewidth=1.0, head_width=1.0, head_length=1.0)
+                    ax.arrow(i, j, *(out[kp, i, j] - inp[kp, i, j]) * 2, color='g', linewidth=0.5, head_width=0.5, head_length=0.5)
 
         # save figs
         plt.savefig(save_path)
