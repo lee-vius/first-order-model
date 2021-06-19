@@ -98,8 +98,8 @@ stylize_params:
   lr_stylizer: 2.0e-4
   lr_styDiscrim: 2.0e-4
   loss_weights:
-    mse: 0.7
-    gan: 0.5
+    mse: 1
+    gan: 0.0
     match: 0
     discrim: 1
   
