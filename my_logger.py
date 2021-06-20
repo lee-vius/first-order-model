@@ -51,8 +51,8 @@ class MyLogger:
     # plot the motion fields based on inputs
     def plot_motions(self, shape, inp, out):
         # reshape the data for plot
-        inp = inp.reshape(shape).detach().data.cpu().numpy()[0] # only take the first data
-        out = out.reshape(shape).detach().data.cpu().numpy()[0] # only take the first data
+        inp = inp.reshape((shape[0], shape[1], shape[4], shape[2], shape[3])).permute((0, 1, 3, 4, 2)).detach().data.cpu().numpy()[0] # only take the first data
+        out = out.reshape((shape[0], shape[1], shape[4], shape[2], shape[3])).permute((0, 1, 3, 4, 2)).detach().data.cpu().numpy()[0] # only take the first data
 
         save_path = os.path.join(self.visualizations_dir, "motion_{}.png".format(self.epoch))
         shape = inp.shape # the shape should be (num_kp, 64, 64, 2)
