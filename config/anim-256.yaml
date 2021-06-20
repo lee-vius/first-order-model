@@ -57,10 +57,10 @@ model_params:
     num_blocks: 4
     sn: True
   stylizer_params:
-    num_channels: 20
-    block_expansion: 40
+    num_channels: 2
+    block_expansion: 4
     max_features: 512
-    num_down_blocks: 2
+    num_down_blocks: 3
     num_bottleneck_blocks: 3
   stylizerDiscrim_params:
     num_channels: 20
@@ -93,10 +93,10 @@ train_params:
 
 
 stylize_params:
-  num_epochs: 50
+  num_epochs: 10
   checkpoint_freq: 5
-  lr_stylizer: 2.0e-4
-  lr_styDiscrim: 2.0e-4
+  lr_stylizer: 2.0e-3
+  lr_styDiscrim: 2.0e-3
   loss_weights:
     mse: 1
     gan: 0.0
