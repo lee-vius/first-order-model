@@ -62,7 +62,7 @@ class StylizerGenerator(nn.Module):
         for i in range(len(self.up_blocks)):
             out = self.up_blocks[i](out)
         out = self.final(out)
-        out = F.sigmoid(out)
+        out = F.tanh(out)
 
         output_dict["prediction"] = out
 
